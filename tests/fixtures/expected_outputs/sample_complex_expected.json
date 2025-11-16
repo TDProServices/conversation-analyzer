@@ -1,0 +1,60 @@
+{
+  "items": [
+    {
+      "type": "BUG",
+      "description": "SQL injection vulnerability in UserController.authenticate() - not sanitizing input",
+      "priority": "high",
+      "source_context": "The `UserController.authenticate()` function has a critical security vulnerability - it's not properly sanitizing input before SQL queries. This could lead to SQL injection.",
+      "confidence": 0.95
+    },
+    {
+      "type": "TODO",
+      "description": "Refactor logging module to use structured logging",
+      "priority": "medium",
+      "source_context": "TODO: Refactor the logging module to use structured logging instead of print statements",
+      "confidence": 0.95
+    },
+    {
+      "type": "BUG",
+      "description": "Payment processing fails intermittently with connection timeout errors",
+      "priority": "high",
+      "source_context": "The payment processing seems to fail intermittently. I'm seeing errors in production logs about \"Connection timeout to payment gateway\". This is blocking users from completing purchases!",
+      "confidence": 0.9
+    },
+    {
+      "type": "BUG",
+      "description": "Cache invalidation logic in ProductService is broken",
+      "priority": "medium",
+      "source_context": "FIXME: The cache invalidation logic in `ProductService` is broken",
+      "confidence": 0.9
+    },
+    {
+      "type": "FEATURE",
+      "description": "Add rate limiting to API endpoints",
+      "priority": "medium",
+      "source_context": "We should probably add rate limiting to the API endpoints",
+      "confidence": 0.8
+    },
+    {
+      "type": "FEATURE",
+      "description": "Migrate to PostgreSQL for better JSON support",
+      "priority": "low",
+      "source_context": "Consider migrating to PostgreSQL instead of MySQL for better JSON support",
+      "confidence": 0.75
+    },
+    {
+      "type": "PROJECT",
+      "description": "Build real-time notification system using WebSockets",
+      "priority": "low",
+      "source_context": "what if we built a real-time notification system using WebSockets? That could be a cool project for next quarter.",
+      "confidence": 0.85
+    },
+    {
+      "type": "BUG",
+      "description": "Email service down - customers not receiving confirmation emails",
+      "priority": "high",
+      "source_context": "urgently need to fix the email service - it's been down for 2 hours and customers aren't receiving confirmation emails.",
+      "confidence": 0.95
+    }
+  ]
+}
