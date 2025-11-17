@@ -1,9 +1,26 @@
 # CLAUDE.md - Conversation Analyzer Project
 
-**Last Updated:** 2025-11-16
+**Version:** 1.1.0
+**Last Updated:** 2025-11-17
 **Project:** conversation-analyzer - Local LLM-powered conversation and file analysis system
 **GitHub:** https://github.com/TDProServices/conversation-analyzer
 **See also:** `/home/tanya/CLAUDE.md` (global guidance - all rules apply)
+
+## Changelog
+
+### v1.1.0 (2025-11-17)
+- Added beginner-friendly explanations for all technical terms
+- Added comprehensive troubleshooting section
+- Clarified hierarchical numbering with examples
+- Explained all technology choices (Ollama, Ripgrep, SQLite, etc.)
+- Added Docker evaluation status
+- Improved clarity on CLI framework choices
+
+### v1.0.0 (2025-11-16)
+- Initial version created during CLI session
+- Comprehensive project guidance established
+- Technology constraints documented
+- Development workflow defined
 
 ---
 
@@ -27,6 +44,9 @@ This project MUST follow ALL requirements from `/home/tanya/CLAUDE.md`, especial
 
 1. **Use Existing Tools First** - Research before building, compose tools, avoid reinventing wheel
 2. **Hierarchical Numbering** - Use 1.1, 1.2, 2.1 format (never restart mid-session)
+   - **What this means:** Number tasks/sections like: 1, 1.1, 1.2, 2, 2.1, 2.1.1, etc.
+   - **Why:** Makes it easy to reference specific items (e.g., "see section 2.1.3")
+   - **Example:** When listing improvements, use 1.1, 1.2, 1.3 not restarting at 1 for each section
 3. **Task Tracking** - Maintain TODO.md, update after every change
 4. **Conventional Commits** - Include proper footer, no AI co-author attribution
 5. **Directory Discipline** - Never change directories without permission
@@ -83,15 +103,29 @@ This project MUST follow ALL requirements from `/home/tanya/CLAUDE.md`, especial
 
 **Required:**
 - **LLM:** Ollama (http://localhost:11434) - MUST be local/offline
+  - *What is Ollama?* Local AI server that runs models on your computer (no cloud needed)
+  - *Why?* Privacy - conversations stay on your machine, critical for legal/medical data
 - **Models:** qwen2.5:3b (fast), llama3.1:8b (better reasoning), mistral, codellama
+  - *qwen2.5:3b* - Fastest, good for testing, ~2GB download
+  - *llama3.1:8b* - Better accuracy, slower, ~4.7GB download
 - **Language:** Python 3.10+ (user preference)
+  - *Why Python?* Easy to read, rich libraries, good for beginners
 - **Storage:** SQLite (structured data) + Markdown (reports)
-- **Search:** Ripgrep (fast file scanning)
+  - *SQLite* - Database in a single file, no server setup needed
+  - *Markdown* - Human-readable reports you can edit in any text editor
+- **Search:** Ripgrep (command: `rg`) - Fast file scanning
+  - *What is Ripgrep?* Like `grep` but much faster, searches text in files
+  - *Why?* Can search 20+ repos in seconds vs minutes with `grep`
+  - *Install:* `sudo apt install ripgrep` (Ubuntu) or `brew install ripgrep` (macOS)
 
 **Consider:**
 - **Docker:** For consistent environment (user wants this evaluated)
+  - *Status:* Will be researched in Phase 2 - decision documented in RESEARCH.md
+  - *Question:* Does Docker simplify setup enough to justify the complexity for beginners?
 - **Existing libraries:** For parsing, NLP, data validation
+  - *Rule:* MUST research existing solutions before building custom code
 - **CLI frameworks:** Click, Typer, argparse
+  - *Will evaluate:* Which is most beginner-friendly in Phase 2
 
 ### User Experience Level
 
@@ -377,6 +411,80 @@ curl http://localhost:11434/api/generate -d '{"model": "qwen2.5:3b", "prompt": "
 **Templates:**
 - TODO.md: `/home/tanya/Templates/TODO.md`
 - Commit format: `/home/tanya/Documents/Projects/computer-setup/llm-workflows/prompts/commit-with-proper-format.md`
+
+---
+
+## Troubleshooting Common Issues
+
+### Ollama Issues
+
+**"Connection refused" or "Cannot connect to Ollama"**
+1. Check if Ollama is running: `ollama list`
+2. If not running: `ollama serve` (in separate terminal)
+3. Verify endpoint: `curl http://localhost:11434/api/tags`
+4. Check firewall isn't blocking port 11434
+
+**"Model not found"**
+1. List available models: `ollama list`
+2. Pull missing model: `ollama pull qwen2.5:3b`
+3. Verify download completed (can take several minutes)
+
+**"Out of memory" errors**
+1. Use smaller model: `qwen2.5:3b` instead of `llama3.1:8b`
+2. Close other applications
+3. Check available RAM: `free -h` (need ~4GB free for smaller models)
+
+### Python Issues
+
+**"ModuleNotFoundError"**
+1. Verify virtual environment is activated: `which python` should show `venv/bin/python`
+2. Reinstall dependencies: `pip install -r requirements.txt`
+3. If still failing, recreate venv:
+   ```bash
+   rm -rf venv
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+**"Permission denied" when installing packages**
+- **Never use `sudo pip`!** This breaks your system Python
+- Instead: use virtual environment or `pip install --user`
+
+### Git Issues
+
+**"fatal: not a git repository"**
+- You're not in the project directory
+- Fix: `cd /path/to/conversation-analyzer`
+
+**"Permission denied (publickey)" when pushing**
+- SSH key not set up for GitHub
+- Option 1: Use HTTPS instead (easier for beginners)
+- Option 2: Set up SSH key: https://docs.github.com/en/authentication/connecting-to-github-with-ssh
+
+**"rejected: non-fast-forward"**
+- Someone else pushed while you were working
+- Fix: `git pull --rebase origin main` then `git push`
+
+### Project-Specific Issues
+
+**"No conversations found"**
+1. Check path is correct: `ls -la /path/to/conversations`
+2. Verify file pattern: conversation files should be `.md` format
+3. Check permissions: `ls -l` should show files are readable
+
+**"Analysis results look wrong"**
+1. Check which model you're using: smaller models less accurate
+2. Try with better model: `llama3.1:8b`
+3. Review confidence threshold in config
+4. Submit example conversation as bug report
+
+### Getting Help
+
+1. **Check logs:** Look in `logs/` directory for error details
+2. **Search issues:** https://github.com/TDProServices/conversation-analyzer/issues
+3. **Create issue:** Include: OS, Python version, error message, steps to reproduce
+4. **Ask questions:** Open discussion on GitHub
 
 ---
 
