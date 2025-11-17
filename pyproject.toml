@@ -1,0 +1,224 @@
+[build-system]
+# What this section does: Tells Python how to build this package
+# We use setuptools because it's standard and widely supported
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# This follows PEP 621 - the modern standard for Python project metadata
+# See RESEARCH.md for why we chose this approach over Poetry/PDM
+
+name = "conversation-analyzer"
+version = "0.1.0"
+description = "Local LLM-powered analysis of conversations to extract TODOs, bugs, and feature requests"
+readme = "README.md"
+authors = [
+    {name = "Tanya Davis", email = "[email protected]"}
+]
+license = {text = "MIT"}  # TODO: Confirm license choice with user
+requires-python = ">=3.10"
+
+# Keywords for PyPI (if we publish later)
+keywords = ["llm", "conversation-analysis", "todo-extraction", "ollama", "claude-code"]
+
+# Classifiers help users find the project on PyPI
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Markup :: Markdown",
+]
+
+# Core dependencies - kept minimal per beginner-friendly principle
+# See RESEARCH.md for justification of each choice
+dependencies = [
+    "ollama>=0.6.0",          # Official Ollama Python client (RESEARCH.md section 4.4)
+    "mistune>=3.0.0",         # Fastest markdown parser (RESEARCH.md section 4.2)
+    "click>=8.1.0",           # CLI framework (evaluated as beginner-friendly)
+    "pyyaml>=6.0",            # Config file parsing
+]
+
+[project.optional-dependencies]
+# Development dependencies - not needed for running the app
+dev = [
+    "pytest>=7.4.0",          # Testing framework
+    "pytest-cov>=4.1.0",      # Test coverage reporting
+    "ruff>=0.1.0",            # Fast linter (RESEARCH.md - modern best practice)
+    "black>=23.0.0",          # Code formatter
+    "mypy>=1.7.0",            # Type checking
+    "types-PyYAML",           # Type stubs for PyYAML
+]
+
+# Extra dependencies for conversation extraction
+extract = [
+    "claude-conversation-extractor>=0.1.0",  # Extract Claude Code conversations (RESEARCH.md section 4.1)
+]
+
+[project.urls]
+Homepage = "https://github.com/TDProServices/conversation-analyzer"
+Documentation = "https://github.com/TDProServices/conversation-analyzer#readme"
+Repository = "https://github.com/TDProServices/conversation-analyzer"
+Issues = "https://github.com/TDProServices/conversation-analyzer/issues"
+
+[project.scripts]
+# CLI entry points - makes 'conversation-analyzer' command available after install
+conversation-analyzer = "conversation_analyzer.cli:main"
+
+[tool.setuptools]
+# Tell setuptools where to find the source code
+packages = ["conversation_analyzer"]
+
+[tool.setuptools.package-dir]
+# Source code is in src/ directory (follows src-layout best practice)
+"" = "src"
+
+# =============================================================================
+# Linting and Code Quality Configuration
+# =============================================================================
+
+[tool.ruff]
+# Ruff is a fast Python linter written in Rust
+# See: https://docs.astral.sh/ruff/
+
+# Target Python 3.10+ (our minimum version)
+target-version = "py310"
+
+# Maximum line length (PEP 8 suggests 79, but 88 is Black's default)
+line-length = 88
+
+# Source code location
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# Enable these rule sets:
+# E = pycodestyle errors
+# F = pyflakes (detects unused imports, variables, etc.)
+# I = isort (import sorting)
+# N = pep8-naming (naming conventions)
+# W = pycodestyle warnings
+# UP = pyupgrade (modern Python syntax)
+select = ["E", "F", "I", "N", "W", "UP"]
+
+# Ignore these specific rules:
+# E501 = line too long (Black handles this)
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Test files can have unused imports, longer lines, etc.
+"tests/**/*.py" = ["F401", "F811"]
+
+[tool.black]
+# Black is an opinionated code formatter
+# See: https://black.readthedocs.io/
+
+# Line length matches ruff
+line-length = 88
+
+# Target Python versions
+target-version = ["py310", "py311", "py312"]
+
+# Files to exclude from formatting
+extend-exclude = '''
+/(
+  # Virtual environments
+  | venv
+  | .venv
+  | env
+  # Build outputs
+  | dist
+  | build
+  | \.eggs
+)/
+'''
+
+[tool.mypy]
+# Mypy is a static type checker
+# See: https://mypy.readthedocs.io/
+
+# Python version to type-check for
+python_version = "3.10"
+
+# Be strict about type checking
+strict = true
+
+# But allow these exceptions for beginner-friendliness:
+# (Gradually tighten these as codebase matures)
+allow_untyped_calls = true       # Can call untyped functions
+allow_untyped_defs = false       # All functions must have types
+disallow_incomplete_defs = false # Partial type hints okay initially
+
+# Where to find type stubs
+mypy_path = "src"
+
+# Ignore missing imports for libraries without type stubs
+# (Add libraries here as needed)
+[[tool.mypy.overrides]]
+module = [
+    "mistune.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+# Pytest configuration
+# See: https://docs.pytest.org/
+
+# Minimum Python version for tests
+minversion = "7.4"
+
+# Where to find tests
+testpaths = ["tests"]
+
+# Test discovery patterns
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# CLI options to always use
+addopts = [
+    "--verbose",           # More detailed output
+    "--strict-markers",    # Only allow registered markers
+    "--cov=src",          # Measure code coverage
+    "--cov-report=term-missing",  # Show lines without coverage
+    "--cov-report=html",   # Generate HTML coverage report
+]
+
+# Register custom markers (for categorizing tests)
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+# =============================================================================
+# Coverage Configuration
+# =============================================================================
+
+[tool.coverage.run]
+# What code to measure coverage for
+source = ["src"]
+
+# Files to exclude from coverage
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__init__.py",
+]
+
+[tool.coverage.report]
+# Fail if coverage falls below this percentage
+fail_under = 70
+
+# Don't report files with 100% coverage (less noise)
+skip_covered = false
+
+# Precision of percentages
+precision = 2
+
+[tool.coverage.html]
+# Where to put HTML coverage reports
+directory = "htmlcov"

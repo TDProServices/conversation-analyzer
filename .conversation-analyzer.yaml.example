@@ -1,0 +1,231 @@
+# Example configuration for conversation-analyzer
+# Copy this file to .conversation-analyzer.yaml and customize
+#
+# Location options:
+# 1. Project root: .conversation-analyzer.yaml
+# 2. Home directory: ~/.conversation-analyzer.yaml
+# 3. Specify with --config flag
+#
+# Format: YAML (beginner-friendly, well-documented)
+
+# =============================================================================
+# Ollama Model Configuration
+# =============================================================================
+
+models:
+  # Primary model for fast structured analysis (see RESEARCH.md)
+  primary: "qwen2.5:3b"
+
+  # Fallback model for better accuracy on complex/implicit TODOs
+  fallback: "llama3.1:8b"
+
+  # When to use fallback instead of primary:
+  # - Analyzing legal/medical conversations (high accuracy needed)
+  # - Finding implicit TODOs ("should", "could", "might")
+  # - Complex deduplication requiring semantic similarity
+  use_fallback_for:
+    - legal
+    - medical
+    - implicit_todos
+
+# Ollama connection settings
+ollama:
+  # Base URL for Ollama API
+  base_url: "http://localhost:11434"
+
+  # Request timeout in seconds
+  timeout: 60
+
+  # Maximum retries for failed requests
+  max_retries: 3
+
+# =============================================================================
+# Analysis Configuration
+# =============================================================================
+
+analysis:
+  # Minimum confidence score to include finding (0-100%)
+  # Lower = more findings (may include false positives)
+  # Higher = fewer findings (may miss some true items)
+  confidence_threshold: 70
+
+  # Extract these types of items
+  extract:
+    - todos
+    - bugs
+    - features
+    - questions
+    - decisions
+
+  # Deduplication settings
+  deduplication:
+    # Similarity threshold for considering items duplicates (0-100%)
+    similarity_threshold: 80
+
+    # Time window for deduplication (days)
+    # Items within this window are checked for duplicates
+    time_window_days: 7
+
+    # Strategy: "exact", "fuzzy", or "semantic"
+    strategy: "semantic"
+
+# =============================================================================
+# Scanning Configuration
+# =============================================================================
+
+scanning:
+  # Directories to scan
+  scan_paths:
+    - ~/Documents/Projects/
+    - ~/work/repos/
+
+  # File patterns to include
+  include_patterns:
+    - "**/*.md"
+    - "**/TODO.md"
+    - "**/TASKS.md"
+    - "**/.claude/**/*.md"
+    - "**/SESSION-*.md"
+    - "**/COMPREHENSIVE-*.md"
+
+  # File patterns to exclude
+  exclude_patterns:
+    - "**/node_modules/**"
+    - "**/venv/**"
+    - "**/.venv/**"
+    - "**/build/**"
+    - "**/dist/**"
+    - "**/.git/**"
+
+  # Directories to skip entirely
+  exclude_dirs:
+    - node_modules
+    - venv
+    - .venv
+    - build
+    - dist
+    - .git
+
+  # Maximum file size to process (MB)
+  max_file_size_mb: 10
+
+  # Skip binary files
+  skip_binary: true
+
+# =============================================================================
+# Database Configuration
+# =============================================================================
+
+database:
+  # SQLite database path
+  # Relative paths are relative to config file location
+  path: "conversation-analyzer.db"
+
+  # Backup database before operations
+  backup_before_write: true
+
+  # Retention policy (days)
+  # Old entries are archived, not deleted
+  retention_days: 90
+
+# =============================================================================
+# Report Configuration
+# =============================================================================
+
+reports:
+  # Default output directory for reports
+  output_dir: "reports"
+
+  # Report format options: markdown, json, html
+  default_format: "markdown"
+
+  # Include in reports
+  include:
+    - statistics
+    - high_priority_items
+    - duplicates_found
+    - cross_references
+    - recommendations
+
+  # Grouping strategy: by_project, by_type, by_priority, by_date
+  group_by: "by_priority"
+
+  # Sort order: priority, date, confidence, alphabetical
+  sort_by: "priority"
+
+# =============================================================================
+# Priority Scoring Configuration
+# =============================================================================
+
+priority:
+  # Keywords that increase priority (case-insensitive)
+  urgency_keywords:
+    - critical
+    - urgent
+    - asap
+    - blocking
+    - blocker
+    - broken
+    - crash
+    - failure
+    - security
+
+  impact_keywords:
+    - data loss
+    - corruption
+    - vulnerability
+    - breach
+    - legal
+    - compliance
+
+  # Contexts that increase priority
+  high_priority_contexts:
+    - legal
+    - medical
+    - financial
+    - security
+
+  # Scoring weights (adjust to tune priority calculation)
+  weights:
+    urgency: 0.4
+    impact: 0.3
+    frequency: 0.2
+    recency: 0.1
+
+# =============================================================================
+# Logging Configuration
+# =============================================================================
+
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
+
+  # Log file location
+  file: "logs/conversation-analyzer.log"
+
+  # Log rotation
+  max_bytes: 10485760  # 10MB
+  backup_count: 5
+
+  # Log format
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# =============================================================================
+# Advanced Options
+# =============================================================================
+
+advanced:
+  # Use hybrid TODO extraction (regex + LLM)
+  # See RESEARCH.md section 4.3 for explanation
+  hybrid_extraction: true
+
+  # Cache LLM responses (faster re-analysis, uses more disk)
+  cache_llm_responses: true
+
+  # Parallel processing (number of worker threads)
+  # 0 = auto-detect based on CPU cores
+  workers: 0
+
+  # Maximum context length for LLM (tokens)
+  # Longer = more context but slower
+  max_context_tokens: 4096

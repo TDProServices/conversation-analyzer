@@ -1,0 +1,25 @@
+# Development dependencies for conversation-analyzer
+# Generated: 2025-11-17
+#
+# These are tools for development only (testing, linting, formatting)
+# NOT needed to run the application
+#
+# To install: pip install -r requirements-dev.txt
+# Or install all (production + dev): pip install -e ".[dev]"
+
+# Include production dependencies
+-r requirements.txt
+
+# Testing
+pytest==8.0.0
+pytest-cov==4.1.0
+
+# Linting and formatting
+ruff==0.1.14             # Fast linter (replaces flake8, isort, etc.)
+black==24.1.0            # Code formatter
+mypy==1.8.0              # Static type checker
+types-PyYAML==6.0.12.12  # Type stubs for PyYAML
+
+# Optional: Pre-commit hooks
+# Uncomment if you want git commit hooks for auto-formatting
+# pre-commit==3.6.0

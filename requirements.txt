@@ -1,0 +1,21 @@
+# Production dependencies for conversation-analyzer
+# Generated: 2025-11-17
+# Python: >=3.10
+#
+# Why we have both pyproject.toml AND requirements.txt:
+# - pyproject.toml: Development, flexible version ranges
+# - requirements.txt: Production, exact pinned versions for reproducibility
+# See RESEARCH.md section 1 for full explanation
+#
+# To install: pip install -r requirements.txt
+# To update: pip list --format=freeze > requirements.txt
+
+# Core dependencies (see pyproject.toml for justification)
+ollama==0.6.1            # Official Ollama Python client
+mistune==3.0.2           # Fast markdown parser
+click==8.1.7             # CLI framework
+PyYAML==6.0.1            # Configuration file parsing
+
+# Optional: Conversation extraction
+# Uncomment if using claude-conversation-extractor
+# claude-conversation-extractor>=0.1.0
