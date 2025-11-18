@@ -1,5 +1,10 @@
 # Conversation Analyzer
 
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/TDProServices/conversation-analyzer)
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 > Local LLM-powered analysis to extract TODOs, bugs, feature requests, and project ideas from conversations, code, and documentation.
 
 **100% local. 100% private. 100% offline.**
@@ -107,6 +112,8 @@ See [docs/INSTALLATION.md](docs/INSTALLATION.md) and [docs/USAGE.md](docs/USAGE.
 ---
 
 ## Example
+
+See [examples/sample_report.md](examples/sample_report.md) and [examples/sample_report.json](examples/sample_report.json) for real output examples.
 
 **Input (conversation):**
 
