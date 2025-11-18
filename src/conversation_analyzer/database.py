@@ -1,11 +1,11 @@
 """SQLite database operations for Conversation Analyzer."""
 
 import sqlite3
-import pickle
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 import json
+import numpy as np
 
 from .models import Item, Relationship, Source, ExtractionRun
 
@@ -182,7 +182,15 @@ class Database:
             params.append(source_file)
 
         where_clause = f"WHERE {' AND '.join(conditions)}" if conditions else ""
-        limit_clause = f"LIMIT {limit}" if limit else ""
+
+        # Validate limit to prevent SQL injection
+        if limit is not None:
+            if not isinstance(limit, int) or limit < 0:
+                raise ValueError("limit must be a non-negative integer")
+            limit_clause = "LIMIT ?"
+            params.append(limit)
+        else:
+            limit_clause = ""
 
         sql = f"SELECT * FROM items {where_clause} ORDER BY priority_score DESC, created_at DESC {limit_clause}"
         cursor = self.conn.execute(sql, params)
@@ -283,33 +291,79 @@ class Database:
         return None
 
     def save_embedding(self, item_id: int, embedding: Any, model_name: str):
-        """Save embedding for an item."""
-        embedding_bytes = pickle.dumps(embedding)
+        """Save embedding for an item.
+
+        Args:
+            item_id: ID of the item
+            embedding: Numpy array or list of floats
+            model_name: Name of the embedding model
+
+        Note:
+            Uses JSON serialization instead of pickle for security.
+            Embeddings are converted to lists before storage.
+        """
+        # Convert embedding to list for JSON serialization (secure alternative to pickle)
+        if isinstance(embedding, np.ndarray):
+            embedding_list = embedding.tolist()
+        elif isinstance(embedding, list):
+            embedding_list = embedding
+        else:
+            # Try to convert to numpy first, then to list
+            try:
+                embedding_list = np.array(embedding).tolist()
+            except Exception as e:
+                raise ValueError(f"Embedding must be numpy array or list: {e}")
+
+        embedding_json = json.dumps(embedding_list)
         sql = """INSERT INTO embeddings (item_id, embedding, model_name)
                  VALUES (?, ?, ?)
                  ON CONFLICT(item_id, model_name) DO UPDATE SET
                  embedding = excluded.embedding"""
 
-        self.conn.execute(sql, (item_id, embedding_bytes, model_name))
+        self.conn.execute(sql, (item_id, embedding_json, model_name))
         self.conn.commit()
 
-    def get_embedding(self, item_id: int, model_name: str) -> Optional[Any]:
-        """Get embedding for an item."""
+    def get_embedding(self, item_id: int, model_name: str) -> Optional[np.ndarray]:
+        """Get embedding for an item.
+
+        Args:
+            item_id: ID of the item
+            model_name: Name of the embedding model
+
+        Returns:
+            Numpy array of embedding vector, or None if not found
+
+        Note:
+            Embeddings are stored as JSON and returned as numpy arrays.
+        """
         cursor = self.conn.execute(
             "SELECT embedding FROM embeddings WHERE item_id = ? AND model_name = ?",
             (item_id, model_name),
         )
         row = cursor.fetchone()
         if row:
-            return pickle.loads(row["embedding"])
+            # Deserialize from JSON (secure alternative to pickle)
+            embedding_list = json.loads(row["embedding"])
+            return np.array(embedding_list)
         return None
 
     def get_all_embeddings(self, model_name: str) -> List[tuple]:
-        """Get all embeddings for a model (item_id, embedding)."""
+        """Get all embeddings for a model (item_id, embedding).
+
+        Args:
+            model_name: Name of the embedding model
+
+        Returns:
+            List of tuples (item_id, numpy_array)
+
+        Note:
+            Embeddings are stored as JSON and returned as numpy arrays.
+        """
         cursor = self.conn.execute(
             "SELECT item_id, embedding FROM embeddings WHERE model_name = ?", (model_name,)
         )
-        return [(row["item_id"], pickle.loads(row["embedding"])) for row in cursor.fetchall()]
+        # Deserialize from JSON (secure alternative to pickle)
+        return [(row["item_id"], np.array(json.loads(row["embedding"]))) for row in cursor.fetchall()]
 
     def get_stats(self) -> Dict[str, Any]:
         """Get database statistics."""
