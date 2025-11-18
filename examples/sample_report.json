@@ -1,0 +1,117 @@
+{
+  "generated_at": "2025-11-16T10:30:00",
+  "total_items": 8,
+  "items": [
+    {
+      "id": 1,
+      "type": "BUG",
+      "description": "SQL injection vulnerability in UserController.authenticate()",
+      "priority": "high",
+      "priority_score": 0.95,
+      "confidence": 0.95,
+      "source": {
+        "type": "code",
+        "file": "src/auth.py",
+        "line": 42,
+        "context": "The `UserController.authenticate()` function has a critical security vulnerability..."
+      },
+      "tags": ["security", "sql-injection"],
+      "entities": {
+        "files": ["src/auth.py"],
+        "functions": ["authenticate"],
+        "components": ["UserController"],
+        "keywords": ["security", "authentication"]
+      },
+      "status": "open",
+      "is_duplicate": false,
+      "duplicate_of": null,
+      "related_to": [3, 6],
+      "extracted_at": "2025-11-16T10:29:58",
+      "created_at": "2025-11-16T10:29:58"
+    },
+    {
+      "id": 2,
+      "type": "BUG",
+      "description": "Payment processing failing - blocking user purchases",
+      "priority": "high",
+      "priority_score": 0.9,
+      "confidence": 0.9,
+      "source": {
+        "type": "conversation",
+        "file": "conversations/team-meeting-2025-11-15.md",
+        "line": null,
+        "context": "The payment processing seems to fail intermittently..."
+      },
+      "tags": ["payment", "production"],
+      "entities": {
+        "keywords": ["payment", "user"]
+      },
+      "status": "open",
+      "is_duplicate": false,
+      "duplicate_of": null,
+      "related_to": [],
+      "extracted_at": "2025-11-16T10:29:58",
+      "created_at": "2025-11-16T10:29:58"
+    },
+    {
+      "id": 3,
+      "type": "TODO",
+      "description": "Update API documentation for new authentication flow",
+      "priority": "medium",
+      "priority_score": 0.5,
+      "confidence": 0.95,
+      "source": {
+        "type": "conversation",
+        "file": "conversations/auth-update-chat.md",
+        "line": null,
+        "context": "TODO: update the API documentation..."
+      },
+      "tags": ["documentation", "api"],
+      "entities": {
+        "keywords": ["api", "authentication"]
+      },
+      "status": "open",
+      "is_duplicate": false,
+      "duplicate_of": null,
+      "related_to": [1],
+      "extracted_at": "2025-11-16T10:29:59",
+      "created_at": "2025-11-16T10:29:59"
+    }
+  ],
+  "statistics": {
+    "total_items": 8,
+    "by_type": {
+      "BUG": 4,
+      "TODO": 2,
+      "FEATURE": 1,
+      "PROJECT": 1
+    },
+    "by_priority": {
+      "high": 4,
+      "medium": 3,
+      "low": 1
+    },
+    "by_status": {
+      "open": 8,
+      "in_progress": 0,
+      "completed": 0,
+      "duplicate": 0
+    }
+  },
+  "analysis_result": {
+    "sources_processed": 2,
+    "items_extracted": 8,
+    "items_deduplicated": 0,
+    "high_priority": 4,
+    "medium_priority": 3,
+    "low_priority": 1,
+    "by_type": {
+      "BUG": 4,
+      "TODO": 2,
+      "FEATURE": 1,
+      "PROJECT": 1
+    },
+    "errors": [],
+    "duration_seconds": 2.45
+  }
+}
