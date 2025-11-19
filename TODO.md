@@ -7,9 +7,34 @@
 
 ## 🚨 HIGH PRIORITY (Blocking)
 
+### 0. Pre-Phase 4: User Action Items
+**Status:** PENDING USER INPUT
+**Blocker:** Phases 1-3.5 complete, awaiting user decisions (10 minutes total)
+
+**Description:**
+Quick user decisions needed before starting Phase 4 (MVP implementation).
+
+**Action Items:**
+1. **Confirm LICENSE choice** (2 minutes)
+   - Default recommendation: MIT License
+   - Alternative: Apache 2.0, GPL-3.0, or other
+   - Tracked in: GitHub Issue #1
+   - Why: Legal requirement for open source project
+   - Action: Reply with "MIT" or specify alternative
+
+2. **Provide email for pyproject.toml** (2 minutes)
+   - Current placeholder: `[email protected]`
+   - Tracked in: GitHub Issue #2
+   - Why: Required for Python package metadata (PEP 621)
+   - Action: Provide your email address
+
+**Once complete:** These will be committed and Phase 4 can begin
+
+---
+
 ### 1. Implement MVP (Phase 4)
-**Status:** READY TO START
-**Blocker:** None (all research and setup complete)
+**Status:** READY TO START (after user action items above)
+**Blocker:** Waiting on Pre-Phase 4 user decisions
 
 **Description:**
 Implement core functionality based on completed research and project setup.
@@ -28,7 +53,13 @@ Implement core functionality based on completed research and project setup.
 - `src/conversation_analyzer/database.py`
 - `src/conversation_analyzer/reporter.py`
 
-**Estimated effort:** 6-8 hours
+**Standard project files to add (Phase 4 polish):**
+- `LICENSE` (MIT or user's choice - see Pre-Phase 4 above)
+- `CHANGELOG.md` (Keep a Changelog format: https://keepachangelog.com/)
+- `CONTRIBUTING.md` (contribution guidelines)
+- `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1: https://www.contributor-covenant.org/)
+
+**Estimated effort:** 6-8 hours (core) + 1 hour (standard files)
 
 ---
 
@@ -48,7 +79,14 @@ Add deduplication, priority scoring, and cross-referencing.
 - Implement confidence scoring (0-100%)
 - Code refactoring and quality improvements
 
-**Estimated effort:** 4-6 hours
+**Infrastructure to add (Phase 5):**
+- CI/CD pipeline (`.github/workflows/ci.yml`)
+  - Run tests on every PR
+  - Lint with ruff, format check with black
+  - Type check with mypy
+  - Python version matrix (3.10, 3.11, 3.12)
+
+**Estimated effort:** 4-6 hours (intelligence) + 1 hour (CI/CD)
 
 ### 2. Testing with real data (Phase 6)
 **Status:** PENDING
